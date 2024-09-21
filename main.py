@@ -1,5 +1,7 @@
 import pygame
 import speech_recognition as sr
+import random
+import sys #sys.exit
 
 class Ball:
     def __init__(self, x, y, width, height, color):
@@ -23,7 +25,7 @@ sh = 500  # screen height
 
 # Load background image
 try:
-    bg = pygame.image.load('bg_img.png')
+    bg = pygame.image.load('Cityscape Background.png')
 except pygame.error as e:
     print('Error loading background image:', e)
 
