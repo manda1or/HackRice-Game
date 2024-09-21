@@ -120,7 +120,6 @@ run = True
 
 
 
-
 while run:
     clock.tick(120)
 
