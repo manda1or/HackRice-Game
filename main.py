@@ -1,5 +1,7 @@
 import pygame
 import speech_recognition as sr
+import random
+import sys #sys.exit
 
 class Ball:
     def __init__(self, x, y, width, height, color):
