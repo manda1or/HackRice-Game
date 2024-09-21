@@ -160,12 +160,15 @@ while run:
             run = False
 
     bg_x -= game_speed
+<<<<<<< Updated upstream
     win.blit(bg, (bg_x, 500))
     win.blit(bg, (bg_x + 800, 500))
 
     if bg_x <= -800:
         bg_x = 0
     
+=======
+>>>>>>> Stashed changes
     # Redraw the window
     redraw_window()
 
