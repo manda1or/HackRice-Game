@@ -1,4 +1,6 @@
 import pygame
+import sys
+import random
 import speech_recognition as sr
 
 class Ball:
@@ -18,8 +20,33 @@ class Ball:
         self.x += self.xv
         self.y += self.yv
 
+class Spike_lower(pygame.sprite.Sprite):
+    def __init__(self, x_pos, y_pos):
+        super().__init__()
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.sprites = []
+        for i in range(1, 2):
+            current_sprite = pygame.transform.scale(
+                pygame.image.load(f".png"), (170, 170))
+            self.sprites.append(current_sprite)
+        self.image = random.choice(self.sprites)
+        self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+
+    def update(self):
+        self.x_pos -= game_speed
+        self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+
 sw = 800  # screen width
 sh = 500  # screen height
+
+#initialize variables
+game_speed = 5
+player_score = 0
+game_over = False
+obstacle_timer = 0
+obstacle_spawn = False
+obstacle_cooldown = 1000
 
 # Load background image
 try:
@@ -34,7 +61,7 @@ bg_rect = bg.get_rect(center=(400, 250))
 
 # Set up the game window
 win = pygame.display.set_mode((sw, sh))
-pygame.display.set_caption("Ball Game")
+pygame.display.set_caption("Shouternity")
 
 # Object to control the framerate
 clock = pygame.time.Clock()
@@ -42,6 +69,8 @@ clock = pygame.time.Clock()
 # Initialize font for displaying "Game Over"
 pygame.font.init()
 font = pygame.font.Font(None, 74)  # Use default font with size 74
+
+
 
 # Function to redraw the game window
 def redraw_window():
@@ -82,10 +111,30 @@ def detect_audio():
     except sr.WaitTimeoutError:
         return False
 
+def end_game():
+    global player_score, game_speed
+    game_over_text = game_font.render("Game Over!", True, "black")
+    game_over_rect = game_over_text.get_rect(center=(640, 300))
+    score_text = game_font.render(f"Score: {int(player_score)}", True, "black")
+    score_rect = score_text.get_rect(center=(640, 340))
+    screen.blit(game_over_text, game_over_rect)
+    screen.blit(score_text, score_rect)
+    game_speed = 5
+    cloud_group.empty()
+    obstacle_group.empty()
+
+
+
 run = True
 while run:
     # Set the framerate
     clock.tick(120)
+
+    if pygame.sprite.spritecollide(.sprite, spike_group, False):
+        game_over = True
+        //death music
+    if game_over:
+        end_game()
 
     # Check for keyboard input to move the ball
     keys = pygame.key.get_pressed()
