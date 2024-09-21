@@ -2,6 +2,7 @@
 
 ##### Clone the code and intall the libraries.
 
+
 ### installiation required
 
 ##### pip install pygame
@@ -13,3 +14,4 @@
 ##### You have to shout to keep your player in the air. If the player touches any border or any obstable then they lose the game.
 
 ##### There is no end point in the game, just reach a high score.
+
