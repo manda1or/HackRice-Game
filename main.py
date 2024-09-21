@@ -23,12 +23,14 @@ sh = 500  # screen height
 
 # Load background image
 try:
-    bg = pygame.image.load('bg_img.png')
+    bg = pygame.image.load('Cityscape Background.png')
 except pygame.error as e:
     print('Error loading background image:', e)
 
 # Background will take full size of the screen
 bg = pygame.transform.scale(bg, (sw, sh))
+bg_x = 0
+bg_rect = bg.get_rect(center=(400, 250))
 
 # Set up the game window
 win = pygame.display.set_mode((sw, sh))
