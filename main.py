@@ -9,8 +9,10 @@ import random
 import speech_recognition as sr
 
 
-class Ball:
+class Ball(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, color):
+        pygame.sprite.Sprite.__init__(self)
+        
         self.x = x
         self.y = y
         self.width = width
@@ -24,6 +26,10 @@ class Ball:
         self.max_yv_up = -3  # Maximum upward speed
         self.image = pygame.image.load('char.png')
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
+
+        self.rect = self.image.get_rect()
+        self.rect.inflate_ip(-10, -10)
+        
     
     def draw(self, win):
         win.blit(self.image, (self.x, self.y))
@@ -57,6 +63,18 @@ class Spike(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.kill()
 
+def draw_text(text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    win.blit(img, (x, y))
+
+def reset_game():
+    spike_group.empty()
+    ball.rect.x = sw//2 - 50
+    ball.rect.y = sh//2 - 100
+    ball.yv = 0
+    score = 0
+    return score
+    
 pygame.init()
 
 sw = 800  # screen width
@@ -81,6 +99,12 @@ font = pygame.font.Font(None, 74)
 
 
 # Initialize variables
+
+score = 0
+pass_spike = False
+font = pygame.font.SysFont("Bauhaus 93", 60)
+white = (255, 255, 255)
+
 ground_scroll = 0
 scroll_speed = 4
 spike_gap = 120
@@ -107,7 +131,7 @@ def redraw_window():
 
 # PyAudio setup for sound detection
 audio_detected = False
-threshold = 30  # Adjust this value to set the sensitivity for noise detection
+threshold = 50  # Adjust this value to set the sensitivity for noise detection
 chunk = 1024
 format = pyaudio.paInt16
 channels = 1
@@ -153,19 +177,27 @@ audio_thread = threading.Thread(target=detect_audio_continuous, daemon=True)
 audio_thread.start()
 
 ball = Ball(sw/5 - 60, sh/3.5, 65, 65, (255, 0, 0))
-
-# ball_group = pygame.sprite.Group()
-# ball_group.add(ball)
+ball_group = pygame.sprite.Group()
+ball_group.add(ball)
 spike_group = pygame.sprite.Group()
 
 run = True
 while run:
 
     clock.tick(60)  # Set the frame rate to 60 FPS
+    if len(spike_group) > 0:
+        if ( ball_group.sprites()[0].rect.left > spike_group.sprites()[0].rect.left) and (ball_group.sprites()[0].rect.right < spike_group.sprites()[0].rect.right) and pass_spike == False:
+            pass_spike = True
+        if pass_spike == True:
+            if ball_group.sprites()[0].rect.left > spike_group.sprites()[0].rect.right:
+                score += 1
+                pass_spike = False
     
-    # pygame.sprite.groupcollide(ball_group, spike_group, False, False) or
+        draw_text(str(score), font, white, int(sw/2), 20)
+
     
-    if ball.y > sh or ball.y <= 0:
+    
+    if pygame.sprite.groupcollide(ball_group, spike_group, False, False) or (ball.y >= sh) or (ball.y <= 0):
             game_over = True
 
     if not game_over:
@@ -197,7 +229,9 @@ while run:
             ball.move()
 
         
-
+    if game_over == True:
+            game_over = False
+            score = reset_game()
 
     # Update the background position
 
