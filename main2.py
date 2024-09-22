@@ -24,8 +24,8 @@ class Ball(pygame.sprite.Sprite):
         self.images = []
         self.index = 0
         self.counter = 0
-        for num in range(1, 10):
-            img = pygame.image.load(f'D{num}.png')
+        for num in range(0, 1):
+            img = pygame.image.load('char.png')
             img = pygame.transform.scale(img, (65, 65))
             self.images.append(img)
         self.image = self.images[self.index]
@@ -65,10 +65,10 @@ class Ball(pygame.sprite.Sprite):
 class Spike(pygame.sprite.Sprite):
     def __init__(self, x, y, position):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('Brick.png')
+        self.image = pygame.image.load('Black.png')
         
         # Resize the image if needed (optional)
-        self.image = pygame.transform.scale(self.image, (80, 60))  # Set your desired size
+        self.image = pygame.transform.scale(self.image, (50, 60))  # Set your desired size
 
         # Get the original rect of the image
         self.rect = self.image.get_rect()
@@ -80,9 +80,9 @@ class Spike(pygame.sprite.Sprite):
         # Adjust based on position (top/bottom spikes)
         if position == 1:
             self.image = pygame.transform.flip(self.image, False, True)
-            self.rect.bottomleft = [x, y - int(spike_gap / 1.2)]
+            self.rect.bottomleft = [x, y - int(spike_gap / 2)]
         if position == -1:
-            self.rect.topleft = [x, y + int(spike_gap / 1.2)]
+            self.rect.topleft = [x, y + int(spike_gap / 2)]
 
 
 
@@ -137,8 +137,8 @@ def redraw_window():
     spike_group.draw(win)
     
     # Draw the spike's rect for debugging
-    # for spike in spike_group:
-    #     pygame.draw.rect(win, (255, 0, 0), spike.rect, 2)  # Draw rect in red for spikes
+    for spike in spike_group:
+        pygame.draw.rect(win, (255, 0, 0), spike.rect, 2)  # Draw rect in red for spikes
 
     if game_over:
         text = font.render('Game Over!', True, (255, 0, 0))
@@ -148,7 +148,7 @@ def redraw_window():
 
 # PyAudio setup for sound detection
 audio_detected = False
-threshold = 15  # Adjust this value to set the sensitivity for noise detection
+threshold = 20  # Adjust this value to set the sensitivity for noise detection
 chunk = 1024
 format = pyaudio.paInt16
 channels = 1
